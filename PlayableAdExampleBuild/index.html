@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>PlayableAdsExample</title>
+
+    <!-- Ensures mobile browsers behave correctly -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no" />
+</head>
+
+<body style="text-align:center; padding:0; margin:0; border:0;">
+
+<!-- CTA OVERLAY (click to start) -->
+<div id="cta-overlay"
+     style="position:absolute;
+                top:0; left:0;
+                width:100%; height:100%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:rgba(0,0,0,0.01);
+                z-index:9999;
+                cursor:pointer;">
+    Tap to Start
+</div>
+
+<!-- UNITY CANVAS -->
+<canvas id="unity-canvas"
+        width="960"
+        height="600"
+        tabindex="-1"
+        style="width:960px;
+                   height:600px;
+                   background:#231F20;">
+</canvas>
+
+<!-- UNITY LOADER (this loads the JS bootstrap) -->
+<script src="Build.loader.js"></script>
+
+<script>
+    // --- CTA HIDE LOGIC ---
+    const cta = document.getElementById("cta-overlay");
+    cta.addEventListener("click", () => {
+        cta.style.display = "none";
+    });
+
+    // --- MOBILE FULLSCREEN ADJUSTMENTS ---
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.head.appendChild(meta);
+
+        const canvas = document.getElementById("unity-canvas");
+        canvas.style.position = "fixed";
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+
+        document.body.style.textAlign = "left";
+    }
+
+    // --- UNITY INSTANCE CREATION (MINIMAL) ---
+    createUnityInstance(
+        document.getElementById("unity-canvas"),
+        {
+            dataUrl: "Build.data",
+            frameworkUrl: "Build.framework.js",
+            codeUrl: "Build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "PlayableAdsExample",
+            productVersion: "0.1.0"
+        }
+    ).catch((message) => {
+        console.warn("Unity Load Warning:", message);
+    });
+</script>
+
+</body>
+</html>
