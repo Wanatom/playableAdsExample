@@ -16,6 +16,7 @@
 <div id="cta-overlay"
      style="position:absolute;
                 top:0; left:0;
+                font-family: Arial, sans-serif;
                 width:100%; height:100%;
                 display:flex;
                 align-items:center;
@@ -23,8 +24,21 @@
                 background:rgba(0,0,0,0.01);
                 z-index:9999;
                 cursor:pointer;">
-    Tap to Start
+    Drag To Play!
 </div>
+
+<!-- POST-GAME CTA OVERLAY -->
+<div id="appearing-button"
+     style="background-image: url('Images/Square_512.jpg');">
+    <div style="font-size: 36px; font-weight: bold;">
+        Play More?
+    </div>
+
+    <div class="install-btn" onclick="installGame()">
+        Install Now
+    </div>
+</div>
+
 
 <!-- UNITY CANVAS -->
 <canvas id="unity-canvas"
