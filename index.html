@@ -5,91 +5,120 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>PlayableAdsExample</title>
 
-    <!-- Ensures mobile browsers behave correctly -->
+    <!-- Mobile behavior -->
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* ⬅️ DESKTOP LAYOUT: centered 9:16 frame */
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ⬅️ Canvas stays locked to 9:16 on desktop */
+        #unity-canvas {
+            width: 360px;       /* desktop preview width */
+            height: auto;
+            aspect-ratio: 9 / 16;
+            background: #231F20;
+        }
+
+        /* ⬅️ Mobile takes fullscreen automatically */
+        @media (max-width: 768px) {
+            #unity-canvas {
+                width: 100%;
+                height: 100%;
+                aspect-ratio: auto; /* remove constraint for fullscreen */
+            }
+
+            #canvas-container {
+                display: block; /* fullscreen */
+            }
+        }
+
+        /* overlays */
+        #cta-overlay,
+        #install-button {
+            pointer-events: auto;
+        }
+    </style>
 </head>
 
-<body style="text-align:center; padding:0; margin:0; border:0;">
+<body>
 
-<!-- CTA OVERLAY (click to start) -->
-<div id="cta-overlay"
-     style="position:absolute;
-                top:0; left:0;
-                font-family: Arial, sans-serif;
-                width:100%; height:100%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                background:rgba(0,0,0,0.01);
-                z-index:9999;
-                cursor:pointer;">
-    Drag To Play!
+<!-- CENTERING CONTAINER -->
+<div id="canvas-container">
+
+    <!-- CTA OVERLAY (always fills screen) -->
+    <div id="cta-overlay"
+         style="position:absolute;
+               top:0; left:0;
+               width:100%; height:100%;
+               font-family: Arial, sans-serif;
+               display:flex;
+               align-items:center;
+               justify-content:center;
+               background:rgba(0,0,0,0.01);
+               z-index:9999;
+               cursor:pointer;">
+        Drag To Play!
+    </div>
+
+    <!-- UNITY CANVAS (desktop centered, mobile fullscreen) -->
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+    <!-- INSTALL BUTTON -->
+    <div id="install-button"
+         onclick="installGame()"
+         style="
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            background: #808080;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 9999;
+            display: none;">
+        Install
+    </div>
+
 </div>
 
-<!-- UNITY CANVAS -->
-<canvas id="unity-canvas"
-        width="960"
-        height="600"
-        tabindex="-1"
-        style="width:960px;
-                   height:600px;
-                   background:#231F20;">
-</canvas>
-
-<!-- INSTALL BUTTON -->
-<div id="install-button"
-     onclick="installGame()"
-     style="
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 14px 28px;
-        background: #808080; /* grey */
-        color: white;
-        font-family: Arial, sans-serif;
-        font-size: 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        z-index: 9999;
-        display: none; /* hidden until game ends */
-     ">
-    Install
-</div>
-
-<!-- UNITY LOADER (this loads the JS bootstrap) -->
+<!-- UNITY LOADER -->
 <script src="PlayableAdsExample.loader.js"></script>
 
 <script>
-    // --- CTA HIDE LOGIC ---
-    const cta = document.getElementById("cta-overlay");
-    cta.addEventListener("click", () => {
-        cta.style.display = "none";
-    });
-    
-    // --- INSTALL HIDE LOGIC ---
-    const install = document.getElementById("install-button");
-    install.addEventListener("click", () => {
-        install.style.display = "none";
-    });
+    // Hide CTA
+    document.getElementById("cta-overlay")
+        .addEventListener("click", () =>
+            document.getElementById("cta-overlay").style.display = "none"
+        );
 
-    // --- MOBILE FULLSCREEN ADJUSTMENTS ---
-    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        const meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.head.appendChild(meta);
+    // Hide install when clicked
+    document.getElementById("install-button")
+        .addEventListener("click", () =>
+            document.getElementById("install-button").style.display = "none"
+        );
 
-        const canvas = document.getElementById("unity-canvas");
-        canvas.style.position = "fixed";
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-
-        document.body.style.textAlign = "left";
-    }
-
-    // --- UNITY INSTANCE CREATION (MINIMAL) ---
+    // Create Unity instance
     createUnityInstance(
         document.getElementById("unity-canvas"),
         {
@@ -102,10 +131,7 @@
             productVersion: "0.1.0"
         }
     ).then(() => {
-        // Unity finished loading
-        setTimeout(() => {
-            showInstallButton();
-        }, 5000);
+        setTimeout(() => { showInstallButton(); }, 5000);
     });
 
     function showInstallButton() {
@@ -113,14 +139,8 @@
     }
 
     function installGame() {
-        // Use the ad network's install() if provided
-        if (typeof install === "function") {
-            install();
-        } else {
-            console.log("Install clicked");
-            // fallback for testing
-            window.location.href = "https://justinhuberportfolio.framer.website/";
-        }
+        if (typeof install === "function") install();
+        else window.location.href = "https://justinhuberportfolio.framer.website/";
     }
 </script>
 
