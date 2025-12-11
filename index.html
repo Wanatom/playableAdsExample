@@ -39,7 +39,7 @@
 
 <!-- INSTALL BUTTON -->
 <div id="install-button"
-     onclick=""
+     onclick="installGame()"
      style="
         position: absolute;
         bottom: 30px;
@@ -53,7 +53,7 @@
         border-radius: 8px;
         cursor: pointer;
         z-index: 9999;
-        display: flex; /* hidden until game ends */
+        display: none; /* hidden until game ends */
      ">
     Install
 </div>
@@ -101,9 +101,27 @@
             productName: "PlayableAdsExample",
             productVersion: "0.1.0"
         }
-    ).catch((message) => {
-        console.warn("Unity Load Warning:", message);
+    ).then(() => {
+        // Unity finished loading
+        setTimeout(() => {
+            showInstallButton();
+        }, 5000);
     });
+
+    function showInstallButton() {
+        document.getElementById("install-button").style.display = "block";
+    }
+
+    function installGame() {
+        // Use the ad network's install() if provided
+        if (typeof install === "function") {
+            install();
+        } else {
+            console.log("Install clicked");
+            // fallback for testing
+            window.location.href = "https://justinhuberportfolio.framer.website/";
+        }
+    }
 </script>
 
 </body>
