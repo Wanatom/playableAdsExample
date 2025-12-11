@@ -39,7 +39,7 @@
 
 <!-- INSTALL BUTTON -->
 <div id="install-button"
-     onclick="installGame()"
+     onclick=""
      style="
         position: absolute;
         bottom: 30px;
@@ -66,6 +66,12 @@
     const cta = document.getElementById("cta-overlay");
     cta.addEventListener("click", () => {
         cta.style.display = "none";
+    });
+    
+    // --- INSTALL HIDE LOGIC ---
+    const install = document.getElementById("install-button");
+    install.addEventListener("click", () => {
+        install.style.display = "none";
     });
 
     // --- MOBILE FULLSCREEN ADJUSTMENTS ---
